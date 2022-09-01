@@ -25,8 +25,6 @@ struct : public std::string
     using std::string::operator=;
 } singleton2;
 
-//fake comment to test git
-
 int main() {
     std::cout << "Singleton variant 1: Static member in a function" << std::endl;
     std::cout << Singleton1::get("Hello") << std::endl; // initializing
