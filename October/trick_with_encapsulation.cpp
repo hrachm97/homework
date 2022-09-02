@@ -25,7 +25,7 @@ public:
 private:
     int topSecretValue;
 
-    //The trick
+    //Adding the trick function
 public:
     int getTheValue() {
         return topSecretValue;
