@@ -3,17 +3,16 @@
 template <typename T>
 class forward_list {
 private:
-    forward_list(const T& init) : value{ init }
-    {
-        std::cout << "a single list: " << (void*)this << " constructed with value: " << init << std::endl;
-    }
-public:
     forward_list* next{};
     T value{};
 public:  
     forward_list() 
     {
         std::cout << "a single list: " << (void*)this << " default constructed." << std::endl;
+    }
+    forward_list(const T& init) : value{ init }
+    {
+        std::cout << "a single list: " << (void*)this << " constructed with value: " << init << std::endl;
     }
     forward_list(size_t count) : next{ count > 1 ? new forward_list : nullptr }
     {
@@ -129,6 +128,10 @@ public:
         os << "Value: " << value << std::endl;
         return os;
     }
+    template <typename C>
+    friend std::ostream& operator<<(std::ostream& os, const forward_list<C>& obj);
+    template <typename C>
+    friend std::ostream& operator<<(std::ostream& os, const forward_list<C>* obj);
 };
 
 template <typename T>
