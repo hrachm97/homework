@@ -19,18 +19,16 @@ public:
         if(count > 2)
         {
             next->next = new forward_list(count - 2);
-        } else {
-            std::cout << "list: " << (void*)this << " constructed with count: " << size() << std::endl;
         }
+        std::cout << "a single list: " << (void*)this << " default constructed." << std::endl;
     }
     forward_list(size_t count, const T& value) : value{ value }, next{ count > 1 ? new forward_list(value) : nullptr } 
     {
         if(count > 2) {
             next->next = new forward_list(count - 2, value);
-        } else {
-            std::cout << "list: " << (void*)this << " constructed with count: " << size()
-            << ", and initialized with value " << value << std::endl;
         }
+        std::cout << "a single list: " << (void*)this << " constructed with value: " << value << std::endl;
+        
     }
     forward_list(const forward_list& rhs) : value{ rhs.value }
     
@@ -41,9 +39,10 @@ public:
             std::cout << "list member: " << (void*)this << " copied from list member: " << (void*)&rhs << std::endl;
         } else {
             std::cout << "Copy constructing." << std::endl;
+            std::cout << "list member: " << (void*)this << " copied from list member: " << (void*)&rhs << std::endl;
         }
     }
-    forward_list(std::initializer_list<T> rhs) 
+    forward_list(std::initializer_list<T> rhs)
     {   
         for(auto i : rhs)
         {
@@ -100,7 +99,10 @@ public:
         if(index == 0) return *this;
         return next->get(index - 1);
     }
-
+    forward_list& get(size_t index) {
+        if(index == 0) return *this;
+        return next->get(index - 1);
+    }
     void resize(size_t new_size, size_t size_counter = 1) {
         if(size_counter == new_size) // new_size is less then current size, the members after index[new_size] destructed
         {
@@ -115,6 +117,20 @@ public:
             return;
         }
         next->resize(new_size, size_counter + 1);
+    }
+    void insert(size_t index, const T& value, size_t count = 1) {
+        forward_list& list = get(index); //auto didn't work
+        forward_list* ptr = list.next; //auto didn't work
+        list.next = new forward_list(count, value);
+        list.end()->next = ptr;
+    }
+    void erase(size_t index, size_t count = 1) {
+        forward_list& list_gap_start = get(index - 1); // not included in gap
+        forward_list& list_gap_end = list_gap_start.get(count); // included in gap (to be destructed)
+        forward_list* ptr = list_gap_end.next;
+        list_gap_end.next = nullptr;
+        list_gap_start.~forward_list();
+        list_gap_start.next = ptr;
     }
     const T& operator[](size_t index) const {
         if(index == 0) return this->value;
@@ -164,5 +180,11 @@ int main() {
     std::cout << a << std::endl;
     auto b(a);
     b.resize(7);
+    std::cout << b << std::endl;
+    b.insert(2,0);
+    b.insert(1,0,2);
+    std::cout << b << std::endl;
+    b.erase(2,2);
+    b.erase(3);
     std::cout << b << std::endl;
 }
