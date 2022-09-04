@@ -28,9 +28,13 @@ public:
     {
         if(count > 2) {
             next->next = new forward_list(count - 2, value);
+        } else {
+            std::cout << "list: " << (void*)this << " constructed with count: " << size()
+            << ", and initialized with value " << value << std::endl;
         }
     }
-    forward_list(const forward_list& rhs) : value{ rhs.value } 
+    forward_list(const forward_list& rhs) : value{ rhs.value }
+    
     {
         if(rhs.next)
         {
@@ -72,13 +76,16 @@ public:
             std::cout << "Size: ";
             return 1;
         }
+        //passes through all members and counts size every time adding one when returning
         return 1 + next->size();
     }
     forward_list* end() {
+        //returns a pointer to the last member
         if(next == nullptr) return this;
         return next->end();
     }
     forward_list* penultimate() {
+        //returns a pointer to the preceding member of the last member
         if(next == nullptr) return nullptr;
         if(next->next == nullptr) return this;
         return next->penultimate();
@@ -96,13 +103,13 @@ public:
     }
 
     void resize(size_t new_size, size_t size_counter = 1) {
-        if(new_size == size_counter) 
+        if(size_counter == new_size) // new_size is less then current size, the members after index[new_size] destructed
         {
             std::cout << "Resizing(cutting) list: " << (void*)this << ", with new_size: " << new_size << std::endl;
             this->~forward_list();
             return;
         }
-        if(next == nullptr)
+        if(next == nullptr) // new_size is greater then current size, deficit members are created with constructor(count)
         {
             std::cout << "Resizing(extending) list: " << (void*)this << ", with new_size: " << new_size << std::endl;
             next = new forward_list(new_size - size_counter);
